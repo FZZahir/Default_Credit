@@ -28,10 +28,13 @@ summary(credit_cp)
 # distribution plot of age
 ggplot(credit_cp, aes(x = AGE)) + geom_histogram(bins = 30, color = "black", fill = "white") + labs(title = "Distribution of Age", x = "Age", y = "Count")
 
+#Great way to make graphics without hassle of ggplot complexity if complecity not required.
+# hist(credit_cp$AGE, prob = TRUE)
+# lines(density(credit_cp$AGE))
 
-ggplot(credit_cp, aes(x = BILL_AMT1)) + geom_histogram(bins = 30, color = "black", fill = "white") + labs(title = "Distribution of BILL_AMT1", x = "BILL_AMT1", y = "Count")
-
-
+ggplot(credit_cp, aes(x = BILL_AMT1)) + geom_histogram(bins = 30, color = "black", fill = "white" ) + labs(title = "Distribution of BILL_AMT1", x = "BILL_AMT1", y = "Count")
+hist(credit_cp$BILL_AMT1, prob = TRUE)
+lines(density(credit_cp$BILL_AMT1))
 ggplot(credit_cp, aes(x = SEX)) + geom_bar(show.legend = TRUE, width = .5)+ labs( title = "Sex Frequency", x = "Sex", y = "Count")
 
 # Create bar plot for percentage proportion of EDUCATION
@@ -87,6 +90,7 @@ HexBinPlot(credit_cp, "AGE", "LIMIT_BAL", "Limit Bal as a function of age") + ge
 
 
 
+
 ggplot(credit_cp, aes(x = AGE, y = LIMIT_BAL, color = "blue", size = LIMIT_BAL), fill = "white") + geom_point() + labs(title = "Scatterplot of Age and Limit Balance", x = "Age", y = "Limit Balance")
 
 
@@ -96,3 +100,24 @@ ggplot(credit_cp, aes(x = AGE, y = LIMIT_BAL, color = "blue", size = LIMIT_BAL),
 
 #select count of education = 6
 #credit_cp %>% filter(EDUCATION == "5") %>% count()
+
+#row numbers of credit_cp
+num_row <- nrow(credit_cp)
+
+#count of education = 6 & 5
+count_6 <- credit_cp %>% filter(EDUCATION == "6"  | EDUCATION== "5") %>% count()
+prop_6 <- (count_6 / num_row) * 100
+prop_6
+
+# We can drop the rows with education = 6 and 5 
+credit_cp <- credit_cp %>% filter(EDUCATION != "6" & EDUCATION != "5")
+nrow(credit_cp)
+
+marriage_0 <- credit_cp %>% filter(MARRIAGE == "0") %>% count()
+marriage_0
+marriage_0/nrow(credit_cp) * 100
+credit_cp <- credit_cp %>% filter(MARRIAGE != "0")
+nrow((credit_cp))
+
+
+boxplot(credit_cp$BILL_AMT1)
