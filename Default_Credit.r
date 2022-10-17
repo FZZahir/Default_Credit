@@ -62,6 +62,14 @@ ggplot(credit_cp, aes(x = EDUCATION)) + geom_bar(show.legend = TRUE) + labs(titl
 
 # Show bar chart for MARRIAGE
 ggplot(credit_cp, aes(x = MARRIAGE)) + geom_bar(show.legend = TRUE) + labs(title = "Marriage Frequency", x = "Marriage", y = "Count")
+# You may also get freq as follows:
+table(credit_cp$MARRIAGE)
+
+# Data Propportion
+table(credit_cp$MARRIAGE)/nrow(credit_cp) * 100
+table(credit_cp$SEX)/nrow(credit_cp) * 100
+table(credit_cp$EDUCATION)/nrow(credit_cp) * 100
+table(credit_cp$default)/nrow(credit_cp) * 100
 
 #distribution of Bill Amount 1
 ggplot(credit_cp, aes(x = BILL_AMT1)) + geom_histogram(bins = 30, color = "black", fill = "white") + labs(title = "Distribution of BILL_AMT1", x = "BILL_AMT1", y = "Count")
