@@ -14,7 +14,7 @@ library(boot)
 
 # Load the dataset
 credit <- read.csv("Default_Credit.csv")
-view(credit)
+View(credit)
 #Get column names
 colnames(credit)
 
@@ -27,15 +27,34 @@ summary(credit_cp)
 # Change column name of default payment next month to default
 colnames(credit_cp)[colnames(credit_cp) == "default.payment.next.month"] <- "default"
 
+
 # check for missing values
 colSums(is.na(credit_cp))
+
+#count of education = 6 & 5
+num_row <- nrow(credit_cp)
+count_6 <- credit_cp %>% filter(EDUCATION == "6"  | EDUCATION== "5") %>% count()
+prop_6 <- (count_6 / num_row) * 100
+prop_6
+
+# We can drop the rows with education = 6 and 5 
+credit_cp <- credit_cp %>% filter(EDUCATION != "6" & EDUCATION != "5")
+nrow(credit_cp)
+
+marriage_0 <- credit_cp %>% filter(MARRIAGE == "0") %>% count()
+marriage_0
+marriage_0/nrow(credit_cp) * 100
+credit_cp <- credit_cp %>% filter(MARRIAGE != "0")
+nrow((credit_cp))
 
 #Adding labels to data 
 credit_cp$default <- factor(credit_cp$default, levels = c(0,1), labels = c("No", "Yes"))
 credit_cp$SEX <- factor(credit_cp$SEX, levels = c(1,2), labels = c("Male", "Female"))
-credit_cp$EDUCATION <- factor(credit_cp$EDUCATION, levels = c(1,2,3,4,5,6), labels = c("Graduate School", "University", "High School", "Others", "Unknown", "Unknown"))
+credit_cp$EDUCATION <- factor(credit_cp$EDUCATION, levels = c(1,2,3,4), labels = c("Graduate School", "University", "High School", "Others"))
 credit_cp$MARRIAGE <- factor(credit_cp$MARRIAGE, levels = c(1,2,3), labels = c("Married", "Single", "Others"))
 View(credit_cp)
+dim(credit_cp)
+colSums(is.na(credit_cp))
 #Check levels of default
 # levels(credit_cp$default)
 # data.frame(level = seq_along(levels(credit_cp$default)),
@@ -92,7 +111,7 @@ ggplot(credit_cp, aes(x = BILL_AMT1, y = BILL_AMT2)) + geom_hex() + labs(title =
 ggplot(credit_cp, aes(x = LIMIT_BAL, y = AGE)) + geom_hex() + labs(title = "Hexbin plot of LIMIT_BAL and AGE", x = "LIMIT_BAL", y = "AGE")
 
 #Hexbin of default and Age
-ggplot(credit_cp, aes(x = AGE, y = default.payment.next.month, )) + geom_hex() + labs(title = "Hexbin plot of DEFAULT and AGE", x = "DEFAULT", y = "AGE")
+ggplot(credit_cp, aes(x = AGE, y = default )) + geom_hex() + labs(title = "Hexbin plot of DEFAULT and AGE", x = "DEFAULT", y = "AGE")
 
 ggplot(q1, aes(x = AGE, y = LIMIT_BAL, color = "blue", size = LIMIT_BAL), fill = "white") + geom_point() + labs(title = "Scatterplot of Age and Limit Balance", x = "Age", y = "Limit Balance")
 
@@ -103,16 +122,18 @@ HexBinPlot(credit_cp, "AGE", "LIMIT_BAL", "Limit Bal as a function of age") + ge
 
 #The following plots below wont work until we set lables for the factors/levels
 
-#ggplot(credit_cp, aes(x=MARRIAGE, fill=AGE)) + geom_bar() 
+ggplot(credit_cp, aes(x=MARRIAGE, fill=AGE)) + geom_bar() 
 
-#ggplot(credit_cp, aes(x=AGE, fill=MARRIAGE)) + geom_bar(position = "dodge") 
+ggplot(credit_cp, aes(x=AGE, fill=MARRIAGE)) + geom_bar(position = "dodge") 
 
-#ShadowPlot(credit_cp, "MARRIAGE", "AGE", title = "Shadow plot of Marriage and Age")") 
+ShadowPlot(credit_cp, "MARRIAGE", "AGE", title = "Shadow plot of Marriage and Age")
 
-#ggplot(customer_data, aes(x=marital_status, fill=health_ins)) + geom_bar(position = "fill")
+#This plot is cool
+ggplot(credit_cp, aes(x=MARRIAGE, fill=EDUCATION)) + geom_bar(position = "fill")
 
 
 # bubble_chart of LIMIT balance and age
+ggplot(credit_cp, aes(x = AGE, y = EDUCATION, color = "blue", size = LIMIT_BAL), fill = "white") + geom_point() + labs(title = "Scatterplot of Age and Limit Balance", x = "Age", y = "Limit Balance")
 
 #credit_cp %>% filter((AGE > 70)) %>% select(-AGE) #seems to select all the data that matches the criteria without AGE if you instead do select(AGE) it will actually print out those ages.
 
@@ -132,20 +153,21 @@ ggplot(credit_cp, aes(x = AGE, y = LIMIT_BAL, color = "blue", size = LIMIT_BAL),
 #row numbers of credit_cp
 num_row <- nrow(credit_cp)
 
-#count of education = 6 & 5
-count_6 <- credit_cp %>% filter(EDUCATION == "6"  | EDUCATION== "5") %>% count()
-prop_6 <- (count_6 / num_row) * 100
-prop_6
+# #count of education = 6 & 5
+# count_6 <- credit_cp %>% filter(EDUCATION == "6"  | EDUCATION== "5") %>% count()
+# prop_6 <- (count_6 / num_row) * 100
+# prop_6
 
-# We can drop the rows with education = 6 and 5 
-credit_cp <- credit_cp %>% filter(EDUCATION != "6" & EDUCATION != "5")
-nrow(credit_cp)
+# # We can drop the rows with education = 6 and 5 
+# credit_cp <- credit_cp %>% filter(EDUCATION != "6" & EDUCATION != "5")
+# nrow(credit_cp)
 
-marriage_0 <- credit_cp %>% filter(MARRIAGE == "0") %>% count()
-marriage_0
-marriage_0/nrow(credit_cp) * 100
-credit_cp <- credit_cp %>% filter(MARRIAGE != "0")
-nrow((credit_cp))
+# marriage_0 <- credit_cp %>% filter(MARRIAGE == "0") %>% count()
+# marriage_0
+# marriage_0/nrow(credit_cp) * 100
+# credit_cp <- credit_cp %>% filter(MARRIAGE != "0")
+# nrow((credit_cp))
 
 
 boxplot(credit_cp$BILL_AMT1)
+
