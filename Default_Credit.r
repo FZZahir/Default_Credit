@@ -24,6 +24,23 @@ view(credit_cp)
 #summary function on credit_cp
 summary(credit_cp)
 
+# Change column name of default payment next month to default
+colnames(credit_cp)[colnames(credit_cp) == "default.payment.next.month"] <- "default"
+
+# check for missing values
+colSums(is.na(credit_cp))
+
+#Adding labels to data 
+credit_cp$default <- factor(credit_cp$default, levels = c(0,1), labels = c("No", "Yes"))
+credit_cp$SEX <- factor(credit_cp$SEX, levels = c(1,2), labels = c("Male", "Female"))
+credit_cp$EDUCATION <- factor(credit_cp$EDUCATION, levels = c(1,2,3,4,5,6), labels = c("Graduate School", "University", "High School", "Others", "Unknown", "Unknown"))
+credit_cp$MARRIAGE <- factor(credit_cp$MARRIAGE, levels = c(1,2,3), labels = c("Married", "Single", "Others"))
+View(credit_cp)
+#Check levels of default
+# levels(credit_cp$default)
+# data.frame(level = seq_along(levels(credit_cp$default)),
+#            label = levels(credit_cp$default))
+
 # using visulization to see the distribution of the data and find anomalies 
 # distribution plot of age
 ggplot(credit_cp, aes(x = AGE)) + geom_histogram(bins = 30, color = "black", fill = "white") + labs(title = "Distribution of Age", x = "Age", y = "Count")
@@ -33,6 +50,9 @@ ggplot(credit_cp, aes(x = AGE)) + geom_histogram(bins = 30, color = "black", fil
 # lines(density(credit_cp$AGE))
 
 ggplot(credit_cp, aes(x = BILL_AMT1)) + geom_histogram(bins = 30, color = "black", fill = "white" ) + labs(title = "Distribution of BILL_AMT1", x = "BILL_AMT1", y = "Count")
+
+
+
 hist(credit_cp$BILL_AMT1, prob = TRUE)
 lines(density(credit_cp$BILL_AMT1))
 ggplot(credit_cp, aes(x = SEX)) + geom_bar(show.legend = TRUE, width = .5)+ labs( title = "Sex Frequency", x = "Sex", y = "Count")
