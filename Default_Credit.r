@@ -11,6 +11,7 @@ library(WVPlots)
 library(ggplot2)
 library(corrplot)
 library(boot)
+library(caret)
 
 # Load the dataset
 credit <- read.csv("Default_Credit.csv")
@@ -168,6 +169,60 @@ num_row <- nrow(credit_cp)
 # credit_cp <- credit_cp %>% filter(MARRIAGE != "0")
 # nrow((credit_cp))
 
+# mu <- mean(credit_cp$LIMIT_BAL)
+# std_err <- sd(credit_cp$LIMIT_BAL)
 
-boxplot(credit_cp$BILL_AMT1)
+# # Each element of LIMIT Balance - mu / std_err
+# z <- (credit_cp$LIMIT_BAL - mu) / std_err
+# z
+# hist(z, breaks = 30, col = "blue", main = "Histogram of z-scores", xlab = "z-scores")
+# View(z)
+# mean(z)
+# sd(z)
+
+# # replace the values of LIMIT_BAL with z-scores
+# credit_cp$LIMIT_BAL <- z
+# View(credit_cp)
+
+# # Each Element of AGE - mu / std_err
+# mu <- mean(credit_cp$AGE)
+# std_err <- sd(credit_cp$AGE)
+# z_age<- (credit_cp$AGE - mu) / std_err
+# hist(z_age, breaks = 30, col = "blue", main = "Histogram of z-scores", xlab = "z-scores", prob = TRUE)
+
+# credit_cp$AGE <- z_age
+# view(credit_cp)
+
+#dummy for education
+
+
+# scale according to median and IQR
+q_scale <- scale(credit_cp$LIMIT_BAL, center = median(credit_cp$LIMIT_BAL), scale = IQR(credit_cp$LIMIT_BAL))
+q_scale
+min(q_scale)
+max(q_scale)
+
+# scale pay_0
+scale_pay <- scale(credit_cp$PAY_0, center = 1, scale = 8)
+scale_pay
+min(scale_pay)
+max(scale_pay)
+table(credit_cp$SEX)
+
+# save credit_cp as csv
+write.csv(credit_cp, "credit_cp.csv")
+
+pp_hpc <- preProcess(credit_cp[,-25],
+ method = c("center", "scale", "YeoJohnson"))
+pp_hpc
+transformed <- predict(pp_hpc, newdata = credit_cp[, -25])
+head(transformed)
+min(transformed$LIMIT_BAL)
+max(transformed$LIMIT_BAL)
+mean(transformed$LIMIT_BAL)
+sd(transformed$LIMIT_BAL)
+hist(transformed$LIMIT_BAL, prob = TRUE, col = "grey", main = "Histogram of transformed LIMIT_BAL", xlab = "LIMIT_BAL")
+lines(density(transformed$LIMIT_BAL), col = "red")
+
+
 
