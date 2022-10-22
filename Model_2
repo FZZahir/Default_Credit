@@ -1,0 +1,41 @@
+# Load the required packages
+library(tidyverse)
+library(mlr)
+library(rpart)
+library(WVPlots)
+library(ggplot2)
+library(corrplot)
+library(boot)
+library(caret)
+
+# Load the dataset
+credit <- read.csv("Default_Credit.csv")
+colnames(credit)[colnames(credit) == "default.payment.next.month"] <- "default"
+
+
+credit$SEX <- factor(credit$SEX, levels = c(1,2), labels = c("Male", "Female"))
+credit$EDUCATION <- factor(credit$EDUCATION, levels = c(1,2,3,4), labels = c("Graduate School", "University", "High School", "Others"))
+credit$MARRIAGE <- factor(credit$MARRIAGE, levels = c(1,2,3), labels = c("Married", "Single", "Others"))
+
+#histogram of SEX.Male
+
+head(model.matrix(~default + ., data = credit))
+dummies <- dummyVars(default ~ ., data = credit)
+credit <-  predict(dummies, newdata = credit)
+view(credit)
+nzv <- nearZeroVar(credit, saveMetrics= TRUE)
+
+#find type for Sex
+summary(credit)
+write.csv(credit, "credit_Dummy.csv")
+
+descrCor <-  cor()
+highCorr <- sum(abs(descrCor[upper.tri(credit)]) > .999)
+descrCor <- cor(credit)
+summary(descrCor[upper.tri(descrCor)])
+highlyCorDescr <- findCorrelation(descrCor, cutoff = .75)
+credit <- credit[,-highlyCorDescr]
+descrCor2 <- cor(credit)
+summary(descrCor2[upper.tri(descrCor2)])
+corrplot(credit, method = "number")
+View(credit)
